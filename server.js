@@ -1,4 +1,4 @@
-server.js : ```
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
 const http = require('http');
@@ -100,5 +100,3 @@ client.login('YOUR_DISCORD_BOT_TOKEN');
 server.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
-
- ```
