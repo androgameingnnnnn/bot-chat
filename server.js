@@ -1,4 +1,3 @@
-
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
 const http = require('http');
