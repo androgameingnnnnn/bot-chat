@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Chat</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: #007bff;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px 8px 0 0;
+      text-align: center;
+      font-size: 1.5em;
+    }
+    .chat {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      background: #e9ecef;
+      position: relative;
+    }
+    .message:nth-child(odd) {
+      background: #f8f9fa;
+    }
+    .author {
+      font-weight: bold;
+      color: #007bff;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .footer {
+      background: #fff;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .footer button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Discord Chat</div>
+    <div class="chat" id="chat"></div>
+    <div class="footer">
+      <input type="text" id="username" placeholder="Enter your name...">
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('init', (messages) => {
+      const chat = document.getElementById('chat');
+      messages.forEach(msg => {
+        const p = document.createElement('p');
+        p.className = 'message';
+        p.dataset.id = msg.id;
+        p.innerHTML = `
+          <span class="author">${msg.author}:</span> ${msg.content}
+          <button class="delete-btn" onclick="deleteMessage('${msg.id}')">Delete</button>
+        `;
+        chat.appendChild(p);
+      });
+    });
+
+    socket.on('message', (msg) => {
+      const chat = document.getElementById('chat');
+      const p = document.createElement('p');
+      p.className = 'message';
+      p.dataset.id = msg.id;
+      p.innerHTML = `
+        <span class="author">${msg.author}:</span> ${msg.content}
+        <button class="delete-btn" onclick="deleteMessage('${msg.id}')">Delete</button>
+      `;
+      chat.appendChild(p);
+      chat.scrollTop = chat.scrollHeight; // Scroll to the bottom
+    });
+
+    socket.on('delete', (messageId) => {
+      const messageElement = document.querySelector(`p[data-id='${messageId}']`);
+      if (messageElement) {
+        messageElement.remove();
+      }
+    });
+
+    function deleteMessage(messageId) {
+      fetch(`/delete/${messageId}`, {
+        method: 'DELETE'
+      });
+    }
+
+    function sendMessage() {
+      const username = document.getElementById('username').value.trim();
+      const content = document.getElementById('messageInput').value.trim();
+      
+      if (content && username) {
+        fetch('/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content, username })
+        }).then(response => {
+          if (response.ok) {
+            document.getElementById('messageInput').value = ''; // Clear input field
+          } else {
+            console.error('Error sending message');
+          }
+        });
+      } else {
+        alert('Please enter your name and message.');
+      }
+    }
+  </script>
+</body>
+</html>
