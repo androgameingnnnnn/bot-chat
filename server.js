@@ -4,6 +4,9 @@ const http = require('http');
 const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 
+require('dotenv').config(); // لتحميل متغيرات البيئة من ملف .env
+
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -94,7 +97,7 @@ io.on('connection', (socket) => {
   });
 });
 
-client.login('MTIwNDk0NzYxODU5NDAyOTU4OQ.G4HeuM.hJm-wNOSC7cb_KrbkPKEZM_YZfzOQc1XMz3J-o');
+client.login(process.env.DISCORD_BOT_TOKEN);
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000');
