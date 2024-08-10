@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
   });
 });
 
-client.login('MTIwNDk0NzYxODU5NDAyOTU4OQ.GtOnUZ.LdsN1Mq9qiMkVzy2fvANMYRjsk7oSxnNz5iehs');
+client.login('MTIwNDk0NzYxODU5NDAyOTU4OQ.G4HeuM.hJm-wNOSC7cb_KrbkPKEZM_YZfzOQc1XMz3J-o');
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000');
