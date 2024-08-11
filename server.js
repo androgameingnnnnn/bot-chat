@@ -39,12 +39,8 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/chat', (req, res) => {
-  res.sendFile(__dirname + '/public/app.html');
-});
-
 app.get('/', (req, res) => {
-  res.send('Welcome to the Discord Chat App!');
+  res.sendFile(__dirname + '/public/app.html');
 });
 
 app.delete('/delete/:id', async (req, res) => {
